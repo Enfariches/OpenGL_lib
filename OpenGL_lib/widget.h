@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QEvent>
+#include <QDebug>
 #include <math.h>
 #include <GL/glu.h>
 
@@ -26,7 +27,8 @@ protected:
 
 private:
     float xRot, yRot, zRot;
-    float zoomScale = 1;
+    float theta = 10;
+    float zoomScale = 90;
     QPoint mPos;
 
     float color_first[3] = {0.16,0.16,0.16};
@@ -41,7 +43,8 @@ private:
 
     void drawStand(); //Стенд из цилиндров
     void drawStandHolder(float a); //Кулочки не готовы
-    void setColor(int r, int g, int b);
+    void setColor(int r, int g, int b); //Изменение цвета
+    void trigger_change(bool trigger);
 
     void mousePressEvent(QMouseEvent*) override;
     void mouseMoveEvent(QMouseEvent*) override;

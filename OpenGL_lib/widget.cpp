@@ -15,15 +15,19 @@ Widget::~Widget()
 void Widget::initializeGL()
 {
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_NORMALIZE);
 }
 
 void Widget::resizeGL(int w, int h)
 {
+    int k = w / h;
     glViewport(0,0,w,h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    int k = w / h;
-    glFrustum(-k,k, -1,1, 1,7);
+    glOrtho(-k,k, -1,1, 1,7);
 
 }
 
@@ -36,17 +40,30 @@ void Widget::paintGL()
     glLoadIdentity();
 
     glTranslatef(0,0,-2.5);
+    trigger_change(true);
+    glScalef(0.2,0.2,0.2);
+    glRotatef(90,0,1,0);
 
-    glRotatef(xRot,1,0,0);
-    glRotatef(yRot,0,1,0);
-    glScalef(zoomScale,zoomScale,zoomScale);
+    glPushMatrix(); //Освещение
+        glRotatef(zoomScale,0,1,0);
+        qDebug() << zoomScale;
+        float position[] = {-2,0,0,0};
+        glLightfv(GL_LIGHT0,GL_POSITION,position);
 
-    //glRotatef(90,0,1,0);
-    drawStand();
-    glTranslatef(0,0,2);
+        glTranslatef(0,0,-5);
+        glScalef(0.5,0.5,0.5);
+        drawCircle(1);
+    glPopMatrix();
 
-    //-----! CODE !-----
-    drawCylinder(2,1,color);
+    glPushMatrix(); // Стенд
+        glTranslatef(0,0,-4); // Перемещение к левому краю
+        drawStand();
+    glPopMatrix();
+
+    glPushMatrix(); // Объект
+        glTranslatef(0,0,-1);// Отделение стойки от фигуры
+        drawParallelepiped(1,1,1);
+    glPopMatrix();
 }
 
 void Widget::mousePressEvent(QMouseEvent* mo){
@@ -62,30 +79,34 @@ void Widget::mouseMoveEvent(QMouseEvent *mo){
 void Widget::wheelEvent(QWheelEvent *mo){
     QPoint wheel = mo->angleDelta();
     if(wheel.y() > 0){
-        zoomScale *= 1.1f;
+        zoomScale += 10.0f;
     }
     else if(wheel.y() < 0){
-        zoomScale /= 1.1f;
+        zoomScale -= 10.0f;
     }
     update();
 }
 
 void Widget::drawParallelepiped(float l, float b, float zi) //высота, ширина, глубина
 {
-    float arr[] = {-1, -1, b,  zi, -1, b,  zi, l, b,  -1, l, b, // передняя
+    float vertex[] = {-1, -1, b,  zi, -1, b,  zi, l, b,  -1, l, b, // передняя
             -1, -1, -b,  zi, -1, -b,  zi, l, -b,  -1, l, -b, //задняя
             -1, -1, -b,  -1, -1, b,  -1, l, b,   -1, l, -b, //левая
              zi, -1, b,  zi, -1, -b,   zi, l, -b,  zi, l, b, //правая
              -1, -1, b,  -1, -1, -b,  zi, -1, -b,  zi, -1, b, //нижняя
-             -1, l, b,  zi, l, b,  zi, l, -b,  -1, l, -b}; //верхняя
+             -1, l, b,  zi, l, b,  zi, l, -b,  -1, l, -b};//верхняя
 
-    glVertexPointer(3, GL_FLOAT, 0, &arr);
+    float normals[] = {-1,-1,-1, -1,-1,1, -1,1,1, -1,1,-1};
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, &vertex);
 
         glColor3fv(color);
+        glNormalPointer(GL_FLOAT,0,&normals);
         glDrawArrays(GL_QUADS, 0, 26);
 
     glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void Widget::drawPipe(float diameter, float xa, float xi){
@@ -225,7 +246,7 @@ void Widget::drawPolyhedron(float x, float y, float z)
 
 void Widget::drawCylinder(float diameter, float xa, float color[3]){
 
-    float radius = diameter / 2;
+    const float radius = diameter / 2;
     const float steps = 40;
     const float angle = 3.1415926 * 2.f / steps;
 
@@ -305,4 +326,14 @@ void Widget::setColor(int r, int g, int b)
     color[0] = r;
     color[1] = g;
     color[2] = b;
+}
+
+void Widget::trigger_change(bool trigger)
+{
+    if (trigger)
+    {
+        glRotatef(11,1,0,0);
+        glRotatef(-22,0,1,0);
+
+    }
 }
