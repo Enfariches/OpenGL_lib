@@ -17,6 +17,7 @@ void Widget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
 }
@@ -39,41 +40,31 @@ void Widget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glTranslatef(0,0,-2.5);
+    glTranslatef(0,0,-2);
     trigger_change(true);
     glScalef(0.2,0.2,0.2);
     glRotatef(90,0,1,0);
 
     glPushMatrix(); //Освещение
-        glRotatef(zoomScale,0,1,0);
+        glRotatef(zoomScale,0,1,0); //zoomScale = 90
         qDebug() << zoomScale;
-        float position[] = {0,0,2,0};
-        glLightfv(GL_LIGHT0,GL_POSITION,position);
-
-        glTranslatef(0,0,2);
-        glScalef(0.5,0.5,0.5);
-        //drawCircle(2);
+        float lt[] = {0.3,0.3,0.3,0.3};
+        float lt_d[] = {1,1,1,1};
+        float position_second[] = {0,0,2,0};
+        glLightfv(GL_LIGHT1,GL_AMBIENT, lt);
+        glLightfv(GL_LIGHT1,GL_DIFFUSE, lt_d);
+        glLightfv(GL_LIGHT1,GL_POSITION,position_second);
     glPopMatrix();
 
-    glPushMatrix(); // Стенд
+    glPushMatrix(); // Стенд //push и pop привязывают команды к объектам.
         glTranslatef(0,0,-3); // Перемещение к левому краю
         drawStand();
     glPopMatrix();
 
     glPushMatrix(); // Объект
         glTranslatef(0,0,-0.5);// Отделение стойки от фигуры
-        drawCylinder(2,1,color);
+        drawParallelepiped(1,1,1);
     glPopMatrix();
-}
-
-void Widget::mousePressEvent(QMouseEvent* mo){
-    mPos = mo->pos();
-}
-
-void Widget::mouseMoveEvent(QMouseEvent *mo){
-    xRot = 1 / M_PI*(mo->pos().y() - mPos.y());
-    yRot = 1 / M_PI*(mo->pos().x() - mPos.x());
-    update();
 }
 
 void Widget::wheelEvent(QWheelEvent *mo){
@@ -120,10 +111,6 @@ void Widget::drawPipe(float diameter, float xa, float xi){
         float radius = diameter / 2;
         const float steps = 40;
         const float angle = 3.1415926 * 2.f / steps;
-        float normals[] = {0,1,0, 0,0,1, 0,1,0, 0,1,1};
-
-        glEnableClientState(GL_NORMAL_ARRAY);
-            glNormalPointer(GL_FLOAT, 0, &normals);
 
         if(xi == 0)
         {
@@ -207,7 +194,6 @@ void Widget::drawPipe(float diameter, float xa, float xi){
                 glEnd();
             }
         }
-        glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void Widget::drawCircle(float radius){
@@ -275,14 +261,13 @@ void Widget::drawCylinder(float diameter, float xa, float color[3]){
         glBegin(GL_TRIANGLE_FAN);
         glColor3fv(color);
         glVertex3f(0,0,xa);
-        glNormal3f(0,0,xa);
+        glNormal3f(0,0,2);
 
         for (int i = 0; i <= steps; i++)
         {
             float x = radius * sin(angle * i);
             float y = -radius * cos(angle * i);
             glVertex3f(x, y, xa);
-            glNormal3f(x, y, xa);
         }
         glEnd();
     }

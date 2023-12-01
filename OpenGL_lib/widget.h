@@ -46,8 +46,6 @@ private:
     void setColor(int r, int g, int b); //Изменение цвета
     void trigger_change(bool trigger);
 
-    void mousePressEvent(QMouseEvent*) override;
-    void mouseMoveEvent(QMouseEvent*) override;
     void wheelEvent(QWheelEvent*) override;
 
 };
