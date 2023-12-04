@@ -41,19 +41,17 @@ void Widget::paintGL()
     glLoadIdentity();
 
     glTranslatef(0,0,-2);
-    trigger_change(true);
+    trigger_change(false);
     glScalef(0.2,0.2,0.2);
     glRotatef(90,0,1,0);
 
     glPushMatrix(); //Освещение
-        glRotatef(zoomScale,0,1,0); //zoomScale = 90
+        glRotatef(100,0,1,0); //zoomScale = 100
         qDebug() << zoomScale;
-        float lt[] = {0.3,0.3,0.3,0.3};
-        float lt_d[] = {1,1,1,1};
-        float position_second[] = {0,0,2,0};
-        glLightfv(GL_LIGHT1,GL_AMBIENT, lt);
-        glLightfv(GL_LIGHT1,GL_DIFFUSE, lt_d);
-        glLightfv(GL_LIGHT1,GL_POSITION,position_second);
+        float position_first[] = {0,0,2,0};
+        glLightfv(GL_LIGHT1,GL_AMBIENT, lt_ambient);
+        glLightfv(GL_LIGHT1,GL_DIFFUSE, lt_diffuse);
+        glLightfv(GL_LIGHT1,GL_POSITION,position_first);
     glPopMatrix();
 
     glPushMatrix(); // Стенд //push и pop привязывают команды к объектам.
@@ -63,7 +61,7 @@ void Widget::paintGL()
 
     glPushMatrix(); // Объект
         glTranslatef(0,0,-0.5);// Отделение стойки от фигуры
-        drawParallelepiped(1,1,1);
+        drawCylinder(2,1,color);
     glPopMatrix();
 }
 
@@ -121,7 +119,9 @@ void Widget::drawPipe(float diameter, float xa, float xi){
 
             glColor3fv(color);
             glVertex3f(x,y,xa);
+            glNormal3f(1,0,-1);
             glVertex3f(x,y,-xa);
+            glNormal3f(-1,0,-1);
 
             for (int i = 1; i <= steps; i++)
             {
@@ -130,7 +130,9 @@ void Widget::drawPipe(float diameter, float xa, float xi){
 
               glColor3fv(color);
               glVertex3f(newX,newY,xa);
+              glNormal3f(0,0,-1);
               glVertex3f(newX,newY,-xa);
+              glNormal3f(-1,0,1);
             }
             glEnd();
         }
@@ -149,7 +151,9 @@ void Widget::drawPipe(float diameter, float xa, float xi){
 
                 glColor3fv(color);
                 glVertex3f(x,y,xa);
+                glNormal3f(-1,0,-1);
                 glVertex3f(x,y,-xa);
+                glNormal3f(-1,0,-1);
 
                 for (int i = 1; i <= steps; i++)
                 {
@@ -158,7 +162,9 @@ void Widget::drawPipe(float diameter, float xa, float xi){
 
                   glColor3fv(color);
                   glVertex3f(newX,newY,xa);
+                  glNormal3f(0,0,-1);
                   glVertex3f(newX,newY,-xa);
+                  glNormal3f(-1,0,1);
                 }
                 glEnd();
 
@@ -177,7 +183,9 @@ void Widget::drawPipe(float diameter, float xa, float xi){
 
                 glColor3fv(color);
                 glVertex3f(mainX,downY,xa);
+                glNormal3f(1,0,-1);
                 glVertex3f(mainX,upY,xa);
+                glNormal3f(-1,0,-1);
 
                 for (int j = 1; j <= steps; ++j)
                 {
@@ -216,15 +224,15 @@ void Widget::drawCircle(float radius){
 
 void Widget::drawPolyhedron(float x, float y, float z)
 {
-    float arr[18] = {-x,0,z, -x/2,y,z, -x/2,-y,z, x/2,y,z, x/2,-y,z, x,0,z}; // верхняя
-    float arr_second[18] = {-x,0,-z, -x/2,y,-z, -x/2,-y,-z, x/2,y,-z, x/2,-y,-z, x,0,-z,}; // нижняя
+    float arr[18] = {-x,0,z, -x/2,y,z, -x/2,-y,z, x/2,y,z, x/2,-y,z, x,0,z}; // верхнее основание
+    float arr_second[18] = {-x,0,-z, -x/2,y,-z, -x/2,-y,-z, x/2,y,-z, x/2,-y,-z, x,0,-z,}; // нижнее основание
     float arr_general[42] = {-x,0,z, -x,0,-z, -x/2,-y,z, -x/2,-y,-z, x/2,-y,z, x/2,-y,-z,
-                           x,0,z, x,0,-z, x/2,y,z, x/2,y,-z, -x/2,y,z, -x/2,y,-z, -x,0,z, -x,0,-z}; //общая
+                           x,0,z, x,0,-z, x/2,y,z, x/2,y,-z, -x/2,y,z, -x/2,y,-z, -x,0,z, -x,0,-z}; //общая грани
 
-    float normals[] = {0,0,1, 0,0,1, 0,0,0, 0,0,1};
-
+    float normals_grounds[] = {0,0,1, 0,0,1, 0,0,1, 0,0,1, 0,0,1, 0,0,1}; // основания фигуры
+    float normals_edges[] = {1,0,1, 1,0,1 ,1,0,1 ,1,0,1 ,1,0,1 ,1,0,1}; //ребра фигуры
     glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, 0, &normals);
+        glNormalPointer(GL_FLOAT, 0, &normals_grounds);
 
    glVertexPointer(3, GL_FLOAT, 0, &arr);
    glEnableClientState(GL_VERTEX_ARRAY);
@@ -237,7 +245,10 @@ void Widget::drawPolyhedron(float x, float y, float z)
     glColor3fv(color);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
    glDisableClientState(GL_VERTEX_ARRAY);
+   glDisableClientState(GL_NORMAL_ARRAY);
 
+   glEnableClientState(GL_NORMAL_ARRAY);
+       glNormalPointer(GL_FLOAT, 0, &normals_edges);
    glVertexPointer(3, GL_FLOAT, 0, &arr_general);
    glEnableClientState(GL_VERTEX_ARRAY);
     glColor3fv(color);
@@ -255,13 +266,12 @@ void Widget::drawCylinder(float diameter, float xa, float color[3]){
     for(int i = 0; i < 2; ++i)
     {
         if(i == 1)
-        {
             xa *= -1;
-        }
+
         glBegin(GL_TRIANGLE_FAN);
         glColor3fv(color);
         glVertex3f(0,0,xa);
-        glNormal3f(0,0,2);
+        glNormal3f(0,0,-1);
 
         for (int i = 0; i <= steps; i++)
         {
@@ -280,10 +290,10 @@ void Widget::drawCylinder(float diameter, float xa, float color[3]){
     glColor3fv(color);
 
     glVertex3f(x,y,xa);
-    glNormal3f(x,y,xa);
+    //glNormal3f(x,y,xa);
 
     glVertex3f(x,y,-xa);
-    glNormal3f(x,y,-xa);
+    //glNormal3f(x,y,-xa);
 
 
     for (int i = 1; i <= steps; i++)
@@ -329,7 +339,7 @@ void Widget::drawStandHolder(float a){
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.5,0.5,0.5);
         glDrawArrays(GL_QUADS,0,32);
-        glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void Widget::setColor(int r, int g, int b)

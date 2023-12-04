@@ -18,7 +18,7 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
-    float color[3] = {0, 0.51, 0.85};
+    float color[3] = {0, 0.51, 0.85}; //Стоковый цвет деталей
 
 protected:
     void initializeGL() override;
@@ -27,13 +27,15 @@ protected:
 
 private:
     float xRot, yRot, zRot;
-    float theta = 10;
-    float zoomScale = 90;
+    float zoomScale = 100;
     QPoint mPos;
 
     float color_first[3] = {0.16,0.16,0.16};
     float color_second[3] = {0.21,0.21,0.21};
     float color_third[3] = {0.38,0.38,0.38};
+
+    float lt_ambient[4] = {0.3,0.3,0.3,0.3}; // Фоновое освещение
+    float lt_diffuse[4] = {1,1,1,1}; //Диффузное освещение
 
     void drawParallelepiped(float l, float b, float zi); // Параллелепипед (высота, ширина, глубина, цвет)
     void drawPipe(float diameter, float xa, float xi = 0); // Труба (диаметр, длина, высота стенки)
@@ -44,7 +46,7 @@ private:
     void drawStand(); //Стенд из цилиндров
     void drawStandHolder(float a); //Кулочки не готовы
     void setColor(int r, int g, int b); //Изменение цвета
-    void trigger_change(bool trigger);
+    void trigger_change(bool trigger); //Триггер переключения камеры
 
     void wheelEvent(QWheelEvent*) override;
 
