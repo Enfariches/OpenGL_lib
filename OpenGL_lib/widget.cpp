@@ -41,7 +41,7 @@ void Widget::paintGL()
     glLoadIdentity();
 
     glTranslatef(0,0,-2);
-    trigger_change(false);
+    trigger_change(true);
     glScalef(0.2,0.2,0.2);
     glRotatef(90,0,1,0);
 
@@ -59,19 +59,31 @@ void Widget::paintGL()
         drawStand();
     glPopMatrix();
 
+    glPushMatrix(); //Кулачки стенда
+        glRotatef(-90,0,1,0);
+        glTranslatef(0,2.5,3);
+        glScalef(0.5,0.5,0.5);
+        drawSH(0.5,1,1);
+        glPushMatrix();
+            glTranslatef(-2,-6,0);
+            glRotatef(-60,1,0,0); // -60 = zoomScale
+            drawSH(0.5,1,1);
+        glPopMatrix();
+    glPopMatrix();
+
     glPushMatrix(); // Объект
         glTranslatef(0,0,-0.5);// Отделение стойки от фигуры
-        drawCylinder(2,1,color);
+        //drawPolyhedron(1,1,1);
     glPopMatrix();
 }
 
 void Widget::wheelEvent(QWheelEvent *mo){
     QPoint wheel = mo->angleDelta();
     if(wheel.y() > 0){
-        zoomScale += 10.0f;
+        zoomScale += 1.0f;
     }
     else if(wheel.y() < 0){
-        zoomScale -= 10.0f;
+        zoomScale -= 1.0f;
     }
     update();
 }
@@ -339,6 +351,36 @@ void Widget::drawStandHolder(float a){
     glEnableClientState(GL_VERTEX_ARRAY);
         glColor3f(0.5,0.5,0.5);
         glDrawArrays(GL_QUADS,0,32);
+    glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void Widget::drawSH(float a, float h, float c){
+    float part = c -(c / 5);
+    float vertex[] = {-1,-1,-a, -1,h,-a, 0,h,-a, 0,h-1,-a, part,h-1,-a, part,-1,-a}; //a - ширина, h - высота, с- глубина
+    float vertex_sec[] = {-1,-1,a, -1,h,a, 0,h,a, 0,h-1,a, part,h-1,a, part,-1,a};
+    float vertex_walls[] = {-1,-1,-a, -1,-1,a, -1,h,a, -1,h,-a,
+                           -1,h,-a, -1,h,a, 0,h,a, 0,h,-a,
+                           0,h,-a, 0,h,a, 0,h-1,a, 0,h-1,-a,
+                           0,h-1,-a, 0,h-1,a, part,h-1,a, part,h-1,-a,
+                           part,h-1,-a, part,h-1,a, part,-1,a, part,-1,-a,
+                           part,-1,-a, part,-1,a, -1,-1,a, -1,-1,-a};
+
+    glVertexPointer(3, GL_FLOAT, 0, &vertex); //Первая сторона
+    glEnableClientState(GL_VERTEX_ARRAY);
+        glColor3f(0.9,0.9,0.9);
+        glDrawArrays(GL_POLYGON, 0 , 6);
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, &vertex_sec); //Вторая сторона
+    glEnableClientState(GL_VERTEX_ARRAY);
+        glColor3f(1,1,1);
+        glDrawArrays(GL_POLYGON, 0 , 6);
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, &vertex_walls); //Стенки
+    glEnableClientState(GL_VERTEX_ARRAY);
+        glColor3f(0.6,0.6,0.6);
+        glDrawArrays(GL_QUADS, 0 , 24);
     glDisableClientState(GL_VERTEX_ARRAY);
 }
 

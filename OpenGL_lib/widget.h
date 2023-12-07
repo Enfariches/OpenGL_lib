@@ -27,7 +27,7 @@ protected:
 
 private:
     float xRot, yRot, zRot;
-    float zoomScale = 100;
+    float zoomScale = 1;
     QPoint mPos;
 
     float color_first[3] = {0.16,0.16,0.16};
@@ -45,6 +45,7 @@ private:
 
     void drawStand(); //Стенд из цилиндров
     void drawStandHolder(float a); //Кулочки не готовы
+    void drawSH(float a, float h, float c);
     void setColor(int r, int g, int b); //Изменение цвета
     void trigger_change(bool trigger); //Триггер переключения камеры
 
