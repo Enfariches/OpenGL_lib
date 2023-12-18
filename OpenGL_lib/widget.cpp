@@ -43,15 +43,16 @@ void Widget::paintGL()
     glTranslatef(0,0,-2);
     trigger_change(true);
     glScalef(0.2,0.2,0.2);
-    glRotatef(90,0,1,0);
+    glRotatef(turnScale,0,1,0);
+    qDebug() << "turnScale:" << turnScale;
 
     glPushMatrix(); //Освещение
         glRotatef(100,0,1,0); //zoomScale = 100
-        qDebug() << zoomScale;
+        qDebug() << "ZoomScale:" << zoomScale;
         float position_first[] = {0,0,2,0};
         glLightfv(GL_LIGHT1,GL_AMBIENT, lt_ambient);
         glLightfv(GL_LIGHT1,GL_DIFFUSE, lt_diffuse);
-        glLightfv(GL_LIGHT1,GL_POSITION,position_first);
+        glLightfv(GL_LIGHT1,GL_POSITION, position_first);
     glPopMatrix();
 
     glPushMatrix(); // Стенд //push и pop привязывают команды к объектам.
@@ -61,14 +62,18 @@ void Widget::paintGL()
 
     glPushMatrix(); //Кулачки стенда
         glRotatef(-90,0,1,0);
-        glTranslatef(0,2.5,3);
+        glTranslatef(-1.5,2,0);
         glScalef(0.5,0.5,0.5);
         drawSH(0.5,1,1);
-        glPushMatrix();
-            glTranslatef(-2,-6,0);
-            glRotatef(-60,1,0,0); // -60 = zoomScale
-            drawSH(0.5,1,1);
-        glPopMatrix();
+
+        glTranslatef(0,-7,-2);
+        glRotatef(210,1,0,0);
+        drawSH(0.5,1,1);
+
+        glRotatef(-210,1,0,0);
+        glTranslatef(0,0,4);
+        glRotatef(-210,1,0,0);
+        drawSH(0.5,1,1);
     glPopMatrix();
 
     glPushMatrix(); // Объект
@@ -80,10 +85,12 @@ void Widget::paintGL()
 void Widget::wheelEvent(QWheelEvent *mo){
     QPoint wheel = mo->angleDelta();
     if(wheel.y() > 0){
-        zoomScale += 1.0f;
+        //zoomScale += 0.1f;
+        turnScale += 10.0f;
     }
     else if(wheel.y() < 0){
-        zoomScale -= 1.0f;
+        //zoomScale -= 0.1f;
+        turnScale -= 10.0f;
     }
     update();
 }

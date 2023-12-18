@@ -28,6 +28,7 @@ protected:
 private:
     float xRot, yRot, zRot;
     float zoomScale = 1;
+    float turnScale = 20;
     QPoint mPos;
 
     float color_first[3] = {0.16,0.16,0.16};
@@ -35,7 +36,7 @@ private:
     float color_third[3] = {0.38,0.38,0.38};
 
     float lt_ambient[4] = {0.3,0.3,0.3,0.3}; // Фоновое освещение
-    float lt_diffuse[4] = {1,1,1,1}; //Диффузное освещение
+    float lt_diffuse[4] = {0.2,0.2,0.2,1}; //Диффузное освещение
 
     void drawParallelepiped(float l, float b, float zi); // Параллелепипед (высота, ширина, глубина, цвет)
     void drawPipe(float diameter, float xa, float xi = 0); // Труба (диаметр, длина, высота стенки)
