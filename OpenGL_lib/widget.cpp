@@ -8,7 +8,7 @@ Widget::Widget(QWidget *parent)
 }
 Widget::~Widget()
 {
- //Test GIT
+
 }
 
 
@@ -309,10 +309,8 @@ void Widget::drawCylinder(float diameter, float xa, float color[3]){
     glColor3fv(color);
 
     glVertex3f(x,y,xa);
-    //glNormal3f(x,y,xa);
 
     glVertex3f(x,y,-xa);
-    //glNormal3f(x,y,-xa);
 
 
     for (int i = 1; i <= steps; i++)
