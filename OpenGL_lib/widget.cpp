@@ -391,9 +391,9 @@ void Widget::drawSH(float a, float h, float c){
 
 void Widget::setColor(int r, int g, int b)
 {
-    color[0] = r;
-    color[1] = g;
-    color[2] = b;
+    color[0] = g;
+    color[1] = b;
+    color[2] = r;
 }
 
 void Widget::trigger_change(bool trigger)
