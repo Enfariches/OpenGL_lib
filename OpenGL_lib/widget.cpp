@@ -8,7 +8,7 @@ Widget::Widget(QWidget *parent)
 }
 Widget::~Widget()
 {
-
+ //Test GIT
 }
 
 
