@@ -2,13 +2,12 @@
 #define WIDGET_H
 
 #include <QOpenGLWidget>
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QEvent>
 #include <QDebug>
-#include <math.h>
-#include <GL/glu.h>
+#include <OpenGL/glu.h>
 
 class Widget : public QOpenGLWidget
 {
