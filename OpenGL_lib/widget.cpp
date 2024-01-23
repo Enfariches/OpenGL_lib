@@ -16,7 +16,7 @@ void Widget::initializeGL()
 {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+    //glEnable(GL_LIGHT0);
     glEnable(GL_LIGHT1);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
@@ -43,13 +43,13 @@ void Widget::paintGL()
     glTranslatef(0,0,-2);
     trigger_change(true);
     glScalef(0.2,0.2,0.2);
-    glRotatef(turnScale,0,1,0);
+    glRotatef(turnScale,0,1,0); // Должно стоять 90
     qDebug() << "turnScale:" << turnScale;
 
     glPushMatrix(); //Освещение
-        glRotatef(100,0,1,0); //zoomScale = 100
+        glRotatef(-100,0,1,0); //zoomScale = -100
         qDebug() << "ZoomScale:" << zoomScale;
-        float position_first[] = {0,0,2,0};
+        float position_first[] = {0,2,2,0};
         glLightfv(GL_LIGHT1,GL_AMBIENT, lt_ambient);
         glLightfv(GL_LIGHT1,GL_DIFFUSE, lt_diffuse);
         glLightfv(GL_LIGHT1,GL_POSITION, position_first);
@@ -64,21 +64,21 @@ void Widget::paintGL()
         glRotatef(-90,0,1,0);
         glTranslatef(-1.5,2,0);
         glScalef(0.5,0.5,0.5);
-        drawSH(0.5,1,1);
+        drawStandHolder(0.5,1,1);
 
         glTranslatef(0,-7,-2);
         glRotatef(210,1,0,0);
-        drawSH(0.5,1,1);
+        drawStandHolder(0.5,1,1);
 
         glRotatef(-210,1,0,0);
         glTranslatef(0,0,4);
         glRotatef(-210,1,0,0);
-        drawSH(0.5,1,1);
+        drawStandHolder(0.5,1,1);
     glPopMatrix();
 
     glPushMatrix(); // Объект
         glTranslatef(0,0,-0.5);// Отделение стойки от фигуры
-        //drawPolyhedron(1,1,1);
+        drawPolyhedron(1,1,1);
     glPopMatrix();
 }
 
@@ -335,31 +335,11 @@ void Widget::drawStand(){
     drawCylinder(4.8,0.2,color_second);
     glTranslatef(0,0,0.2);
     drawCylinder(4,0.6,color_third);
+    drawCylinder(1,0.601, color_first);
 
 }
 
-void Widget::drawStandHolder(float a){
-    float z = a / 2;
-    float holder_arr[] = {-2,2.3,z, -1.8,2.3,z, -1.8,a,z, -2,a,z,
-                         -2,2.3,-z, -1.8,2.3,-z, -1.8,a,-z, -2,a,-z,
-                          -2,2.3,z, -1.8,2.3,z, -1.8,2.3,-z, -2,2.3,-z,
-
-
-                         -2,1.5,z, -2,a,z, 0,a,z, 0,1.5,z,
-                         -2,1.5,-z, -2,a,-z, 0,a,-z, 0,1.5,-z,
-                         0,a,-z, 0,a,z, 0,1.5,z, 0,1.5,-z,
-                         -2,1.5,z, 0,1.5,z, 0,1.5,-z, -2,1.5,-z,
-                         -1.8,2.3,z, -1.8,2.3,-z, -1.8,1.5,-z, -1.8,1.5,z,
-                         };
-
-    glVertexPointer(3,GL_FLOAT,0,&holder_arr);
-    glEnableClientState(GL_VERTEX_ARRAY);
-        glColor3f(0.5,0.5,0.5);
-        glDrawArrays(GL_QUADS,0,32);
-    glDisableClientState(GL_VERTEX_ARRAY);
-}
-
-void Widget::drawSH(float a, float h, float c){
+void Widget::drawStandHolder(float a, float h, float c){
     float part = c -(c / 5);
     float vertex[] = {-1,-1,-a, -1,h,-a, 0,h,-a, 0,h-1,-a, part,h-1,-a, part,-1,-a}; //a - ширина, h - высота, с- глубина
     float vertex_sec[] = {-1,-1,a, -1,h,a, 0,h,a, 0,h-1,a, part,h-1,a, part,-1,a};
@@ -387,6 +367,9 @@ void Widget::drawSH(float a, float h, float c){
         glColor3f(0.6,0.6,0.6);
         glDrawArrays(GL_QUADS, 0 , 24);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+
+
 }
 
 void Widget::setColor(int r, int g, int b)

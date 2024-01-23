@@ -28,15 +28,16 @@ protected:
 private:
     float xRot, yRot, zRot;
     float zoomScale = 1;
-    float turnScale = 20;
+    float turnScale = 90;
     QPoint mPos;
 
     float color_first[3] = {0.16,0.16,0.16};
     float color_second[3] = {0.21,0.21,0.21};
     float color_third[3] = {0.38,0.38,0.38};
+    float color_background[3] = {0.95,0.95,0.95};
 
-    float lt_ambient[4] = {0.3,0.3,0.3,0.3}; // Фоновое освещение
-    float lt_diffuse[4] = {0.2,0.2,0.2,1}; //Диффузное освещение
+    float lt_ambient[4] = {0.4,0.4,0.4,0.4}; // Фоновое освещение
+    float lt_diffuse[4] = {0.7,0.7,0.7,0.7}; //Диффузное освещение
 
     void drawParallelepiped(float l, float b, float zi); // Параллелепипед (высота, ширина, глубина, цвет)
     void drawPipe(float diameter, float xa, float xi = 0); // Труба (диаметр, длина, высота стенки)
@@ -45,8 +46,7 @@ private:
     void drawPolyhedron(float x, float y, float z); // Многоугольник (6-льник в данном случае, без параметров)
 
     void drawStand(); //Стенд из цилиндров
-    void drawStandHolder(float a); //Кулочки не готовы
-    void drawSH(float a, float h, float c);
+    void drawStandHolder(float a, float h, float c);
     void setColor(int r, int g, int b); //Изменение цвета
     void trigger_change(bool trigger); //Триггер переключения камеры
 
