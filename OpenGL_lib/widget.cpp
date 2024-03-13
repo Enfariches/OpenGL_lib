@@ -77,7 +77,7 @@ void Widget::paintGL()
 
     glPushMatrix(); // Объект
         glTranslatef(0,0,-0.5);// Отделение стойки от фигуры
-        drawPolyhedron(1,1,1);
+        drawPipe(1,1,0.5);
     glPopMatrix();
 }
 
